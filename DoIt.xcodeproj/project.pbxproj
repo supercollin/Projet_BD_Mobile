@@ -14,6 +14,8 @@
 		B820A6F9206E200D00D30B47 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B820A6F7206E200D00D30B47 /* LaunchScreen.storyboard */; };
 		B820A701206E242D00D30B47 /* ListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B820A700206E242D00D30B47 /* ListTableViewCell.swift */; };
 		B820A703206E313F00D30B47 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = B820A702206E313F00D30B47 /* Item.swift */; };
+		B820A707206E7B9500D30B47 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B820A706206E7B9500D30B47 /* DataManager.swift */; };
+		B820A70C206E84E700D30B47 /* DataManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B820A70B206E84E700D30B47 /* DataManagerProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,8 @@
 		B820A6FA206E200D00D30B47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B820A700206E242D00D30B47 /* ListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewCell.swift; sourceTree = "<group>"; };
 		B820A702206E313F00D30B47 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		B820A706206E7B9500D30B47 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		B820A70B206E84E700D30B47 /* DataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +62,7 @@
 		B820A6ED206E200D00D30B47 /* DoIt */ = {
 			isa = PBXGroup;
 			children = (
+				B820A708206E7CD900D30B47 /* Managers */,
 				B820A705206E650500D30B47 /* Controllers */,
 				B820A704206E64E900D30B47 /* Models */,
 				B820A6EE206E200D00D30B47 /* AppDelegate.swift */,
@@ -84,6 +89,31 @@
 				B820A6F0206E200D00D30B47 /* ListTableViewController.swift */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		B820A708206E7CD900D30B47 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				B820A70A206E84B700D30B47 /* Protocol */,
+				B820A709206E84AB00D30B47 /* Impl */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		B820A709206E84AB00D30B47 /* Impl */ = {
+			isa = PBXGroup;
+			children = (
+				B820A706206E7B9500D30B47 /* DataManager.swift */,
+			);
+			path = Impl;
+			sourceTree = "<group>";
+		};
+		B820A70A206E84B700D30B47 /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				B820A70B206E84E700D30B47 /* DataManagerProtocol.swift */,
+			);
+			path = Protocol;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -159,9 +189,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B820A703206E313F00D30B47 /* Item.swift in Sources */,
+				B820A707206E7B9500D30B47 /* DataManager.swift in Sources */,
 				B820A6F1206E200D00D30B47 /* ListTableViewController.swift in Sources */,
 				B820A6EF206E200D00D30B47 /* AppDelegate.swift in Sources */,
 				B820A701206E242D00D30B47 /* ListTableViewCell.swift in Sources */,
+				B820A70C206E84E700D30B47 /* DataManagerProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,79 +14,40 @@ class ListTableViewController: UIViewController {
     @IBOutlet weak var searchBarTableView: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
-    //MARK: var
-    //var items = ["Pain", "Lait", "jambon"]
-    var items2 = [Item]()
-    var filterItems = [Item]()
+    //MARK: DataManager
+    let dataManager : DataManager = DataManager.shared
     
-    //MARK: var class
-    class var documentDirectory : URL{
-        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-    }
-    
-    class var dataFileUrl : URL{
-        return documentDirectory.appendingPathComponent("List").appendingPathExtension("json")
-    }
-    
-    
+    //MARK: ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        //createItems()
-        searchBarTableView.delegate = self
-        loadList()
-    }
-    
-    
-    //MARK: func for save and load
-    func saveList(){
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
         
-        do {
-            let data = try encoder.encode(items2)
-            try data.write(to: ListTableViewController.dataFileUrl)
-        } catch {
-            
-        }
+        searchBarTableView.delegate = self
     }
-    
-    func loadList(){
-        let decoder = JSONDecoder()
-        do {
-            let data = try String(contentsOf: ListTableViewController.dataFileUrl, encoding: .utf8).data(using: .utf8)
-            items2 = try decoder.decode([Item].self, from: data!)
-        } catch {
-            
-        }
-    }
-    
-    
-    //MARK: methods
-    /*func createItems(){
-        for item in items{
-            let newElement = Item(name : item)
-            items2.append(newElement)
-        }
-    }*/
 
     //MARK: Actions
     
     @IBAction func EditAction(_ sender: Any) {
         tableView.isEditing = !tableView.isEditing
-        saveList()
+        dataManager.saveListInFile()
     }
     
     @IBAction func addAction(_ sender: Any) {
         
         let alertController = UIAlertController(title: "DoIt", message: "New Item", preferredStyle: .alert )
         let  okAction = UIAlertAction( title:"Ok", style: .default){ (action) in
+            
             let textField = alertController.textFields![0]
             
             if(textField.text != ""){
-                let item = Item(name: textField.text!)
-                self.items2.append(item)
+                self.dataManager.AddItem(name: textField.text!)
                 self.tableView.reloadData()
-                self.saveList()
+                
+                self.dataManager.saveListInFile()
+            }
+            
+            if(self.searchBarTableView.text != ""){
+                self.dataManager.filterBy(name: self.searchBarTableView.text!.lowercased())
+                self.tableView.reloadData()
             }
             
         }
@@ -100,25 +61,29 @@ class ListTableViewController: UIViewController {
     }
 }
 
+
+//MARK: Extension UITableViewDataSource, UITableViewDelegate
 extension ListTableViewController : UITableViewDataSource, UITableViewDelegate{
     
     //MARK: UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if(filterItems.isEmpty && searchBarTableView.text == ""){
-            return items2.count
+        
+        if(dataManager.filterItems.isEmpty && searchBarTableView.text == ""){
+            return dataManager.items.count
         }else{
-           return filterItems.count
+           return dataManager.filterItems.count
         }
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ListViewCellIdentifier")
         
         let item : Item
-        if(filterItems.isEmpty && searchBarTableView.text == ""){
-            item = items2[indexPath.row]
+        if(dataManager.filterItems.isEmpty && searchBarTableView.text == ""){
+            item = dataManager.items[indexPath.row]
         }else{
-            item = filterItems[indexPath.row]
+            item = dataManager.filterItems[indexPath.row]
         }
         
         cell?.accessoryType = item.checked ? .checkmark : .none
@@ -128,56 +93,55 @@ extension ListTableViewController : UITableViewDataSource, UITableViewDelegate{
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let sourceItem = items2.remove(at: sourceIndexPath.row)
-        
-        items2.insert(sourceItem, at: destinationIndexPath.row)
+        dataManager.moveItem(from: sourceIndexPath.row, To: destinationIndexPath.row)
     }
+    
     
     //MARK: UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         tableView.deselectRow(at: indexPath, animated: true)
         
         let item : Item
-        if(filterItems.isEmpty && searchBarTableView.text == ""){
-            item = items2[indexPath.row]
+        if(dataManager.filterItems.isEmpty && searchBarTableView.text == ""){
+            item = dataManager.items[indexPath.row]
         }else{
-            item = filterItems[indexPath.row]
+            item = dataManager.filterItems[indexPath.row]
         }
         
         item.checked = !item.checked
         
         tableView.reloadRows(at: [indexPath], with: .automatic)
-        saveList()
+        
+        dataManager.saveListInFile()
+        
     }
     
-    /*func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return items2.count > 1
-    }*/
-    
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        if(filterItems.isEmpty){
-            return true
-        }
-        return false
+        
+        return dataManager.filterItems.isEmpty
+        
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        items2.remove(at: indexPath.row)
+        
+        dataManager.items.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: .automatic)
-        saveList()
+        
+        dataManager.saveListInFile()
+        
     }
     
 }
 
+//MARK: Extension UISearchBarDelegate
 extension ListTableViewController : UISearchBarDelegate{
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
-        filterItems = items2.filter { (item) -> Bool in
-            return item.name.lowercased().contains(searchText.lowercased())
-        }
-        
+        dataManager.filterBy(name: searchText)
         tableView.reloadData()
+        
     }
     
 }
